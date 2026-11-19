@@ -73,6 +73,9 @@ class Shop(models.Model):
 
 
 class Category(models.Model):
+    external_id = models.PositiveBigIntegerField(
+        "ID в прайсе", null=True, blank=True, unique=True
+    )
     name = models.CharField("Название", max_length=120)
     shops = models.ManyToManyField(
         Shop, related_name="categories", blank=True, verbose_name="Магазины"
@@ -101,6 +104,11 @@ class Product(models.Model):
         ordering = ("name",)
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
+        constraints = (
+            models.UniqueConstraint(
+                fields=("category", "name"), name="unique_category_product"
+            ),
+        )
 
     def __str__(self):
         return self.name
